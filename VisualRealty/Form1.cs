@@ -91,7 +91,7 @@ namespace VisualRealty
 
 				double del = double.IsInfinity(row.Area) ? double.Parse(row.Parameters["Площадь"]) : row.Area;
 
-				if (double.IsInfinity(del) || double.IsNaN(del) || del>=0)
+				if (double.IsInfinity(del) || double.IsNaN(del) || del <= 0)
 					throw new Exception("Жопа");
 				double value = row.Price / del;
 				points.Add(new ValuePoint(x, y, value));
