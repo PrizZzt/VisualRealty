@@ -1,6 +1,6 @@
 ﻿namespace VisualRealty
 {
-  partial class Form1
+  partial class MainForm
   {
     /// <summary>
     /// Обязательная переменная конструктора.
@@ -58,6 +58,7 @@
 			this.MainMap.Size = new System.Drawing.Size(956, 636);
 			this.MainMap.TabIndex = 0;
 			this.MainMap.Zoom = 0D;
+			this.MainMap.OnMarkerClick += new GMap.NET.WindowsForms.MarkerClick(this.MainMap_OnMarkerClick);
 			this.MainMap.OnMapZoomChanged += new GMap.NET.MapZoomChanged(this.MainMap_OnMapZoomChanged);
 			// 
 			// button1
@@ -80,7 +81,7 @@
 			this.button2.UseVisualStyleBackColor = true;
 			this.button2.Click += new System.EventHandler(this.button2_Click);
 			// 
-			// Form1
+			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -88,7 +89,7 @@
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.MainMap);
-			this.Name = "Form1";
+			this.Name = "MainForm";
 			this.Text = "Form1";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.Form1_Load);

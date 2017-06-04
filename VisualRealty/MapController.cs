@@ -1,14 +1,19 @@
-﻿using System;
+﻿using GMap.NET;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 
 namespace VisualRealty
 {
 	public class MapController
 	{
-		private List<ValuePoint> points = new List<ValuePoint>();
+		public List<ValuePoint> Points => points;
+		private List<ValuePoint> points;
 
 		public static int SizeFromZoom(double _zoom)
 		{
@@ -30,9 +35,66 @@ namespace VisualRealty
 			points = _points;
 		}
 
+		public void LoadPoints(string fileName)
+		{
+			if (File.Exists(fileName))
+			{
+				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<ValuePoint>));
+				using (FileStream fs = new FileStream(fileName, FileMode.Open))
+				{
+					points = ((List<ValuePoint>)serializer.ReadObject(fs)).Distinct().ToList();
+				}
+			}
+		}
+
+		public void SavePoints(string fileName)
+		{
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			if (File.Exists(fileName))
+			{
+				string oldDataFile = Path.ChangeExtension(fileName, "bak");
+				File.Delete(oldDataFile);
+				File.Move(fileName, oldDataFile);
+			}
+
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<ValuePoint>));
+			using (FileStream fs = new FileStream(fileName, FileMode.Create))
+			{
+				serializer.WriteObject(fs, points);
+			}
+		}
+
+		public void AddPoints(IEnumerable<ValuePoint> addPoints)
+		{
+			foreach (var point in addPoints)
+			{
+				if (points.Any(p => p.Url == point.Url) == false)
+					points.Add(point);
+			}
+		}
+
+		public void PlaceMarkers(GMapOverlay overlay)
+		{
+			overlay.Markers.Where(m => string.IsNullOrEmpty(m.ToolTipText) == false).ToList().Clear();
+			foreach (var point in points)
+			{
+				GMapMarker thisMarker = new GMarkerGoogle(new PointLatLng(point.Latitude, point.Longitude), GMarkerGoogleType.arrow);
+				thisMarker.IsHitTestVisible = true;
+				thisMarker.ToolTipText = point.Url;
+				overlay.Markers.Add(thisMarker);
+			}
+		}
+
+		public MapController()
+		{
+			points = new List<ValuePoint>();
+		}
+
 		public void CreateMaps()
 		{
-			for (int k = 1; k <= 2; k++)
+			for (int k = 1; k <= 4; k++)
 			{
 				CreateMap(k);
 			}
@@ -60,9 +122,9 @@ namespace VisualRealty
 			int sizeSquared = (int)(Math.Pow(2, _size - 1));
 			int sizeMap = sizeSquared * 1000;
 
-			string fileName = $"{ZoomFromSize(_size)}.bmp";
-			if (File.Exists(fileName))
-				File.Delete(fileName);
+			string newFileName = $"{ZoomFromSize(_size)}_new.bmp";
+			if (File.Exists(newFileName))
+				File.Delete(newFileName);
 
 			using (Bitmap curMap = new Bitmap(sizeMap, sizeMap))
 			{
@@ -74,13 +136,24 @@ namespace VisualRealty
 					}
 				}
 
-				curMap.Save(fileName);
+				curMap.Save(newFileName);
 			}
 		}
 
 		public Bitmap GetMap(int _size)
 		{
 			string fileName = $"{ZoomFromSize(_size)}.bmp";
+			string newFileName = $"{ZoomFromSize(_size)}_new.bmp";
+
+			try
+			{
+				if (File.Exists(newFileName))
+				{
+					File.Delete(fileName);
+					File.Move(newFileName, fileName);
+				}
+			}
+			catch (Exception) { }
 			if (File.Exists(fileName))
 			{
 				return new Bitmap(fileName);

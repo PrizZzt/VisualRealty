@@ -37,8 +37,8 @@ namespace VisualRealty
 		string metro;
 		[DataMember]
 		string param_1943;
-		[DataMember]
-		string url;
+		[DataMember(Name = "url")]
+		public string Url;
 		[DataMember]
 		int cat1_id;
 		[DataMember]
@@ -79,6 +79,8 @@ namespace VisualRealty
 		TImgurl[] Images;
 		[DataMember(Name = "param_2515")]
 		public float Area;
+		[DataMember(Name = "param_2313")]
+		public float SecondArea;
 		[DataMember]
 		string phone;
 		[DataMember(Name = "params")]
