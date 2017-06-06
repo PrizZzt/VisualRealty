@@ -39,7 +39,6 @@ namespace VisualRealty
 		private void Form1_Load(object sender, EventArgs e)
 		{
 			MainMap_OnMapZoomChanged();
-			mapController.PlaceMarkers(markers);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -72,7 +71,7 @@ namespace VisualRealty
 			mapController.SavePoints(MarkersDataFileName);
 		}
 
-		private void button2_Click(object sender, EventArgs e)
+		private void LoadMap_Click(object sender, EventArgs e)
 		{
 			List<AvitoRow> data;
 			using (OpenFileDialog ofd = new OpenFileDialog())

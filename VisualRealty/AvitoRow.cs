@@ -77,9 +77,9 @@ namespace VisualRealty
 		string param_2016;
 		[DataMember(Name = "images")]
 		TImgurl[] Images;
-		[DataMember(Name = "param_2515")]
-		public float Area;
 		[DataMember(Name = "param_2313")]
+		public float Area;
+		[DataMember(Name = "param_2515")]
 		public float SecondArea;
 		[DataMember]
 		string phone;

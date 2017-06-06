@@ -3,6 +3,7 @@ using System.Text;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace VisualRealty
 {
@@ -18,10 +19,21 @@ namespace VisualRealty
 				{
 					while (sr.EndOfStream == false)
 					{
-						string line = sr.ReadLine().Replace('"', '_').Replace('\'', '"').Replace("\\x","");
-						using (MemoryStream srr = new MemoryStream(Encoding.UTF8.GetBytes(line)))
+						try
 						{
-							data.Add((AvitoRow)serializer.ReadObject(srr));
+							string line = sr.ReadLine().Replace('"', '_').Replace('\'', '"').Replace("\\x", "");
+							using (MemoryStream srr = new MemoryStream(Encoding.UTF8.GetBytes(line)))
+							{
+								data.Add((AvitoRow)serializer.ReadObject(srr));
+							}
+						}
+						catch (Exception ex)
+						{
+							string line = sr.ReadLine().Replace('\'', '"');
+							using (MemoryStream srr = new MemoryStream(Encoding.UTF8.GetBytes(line)))
+							{
+								data.Add((AvitoRow)serializer.ReadObject(srr));
+							}
 						}
 					}
 				}
